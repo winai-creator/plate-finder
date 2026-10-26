@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบค้นหาและแจ้งป้ายทะเบียนหาย/เก็บได้ (อุทกภัย)</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Prompt & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+    }
+    .font-plate {
+      font-family: 'Prompt', sans-serif;
+      letter-spacing: 1px;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+          <i data-lucide="shield-alert" class="w-7 h-7 text-yellow-300"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold leading-tight flex items-center gap-2">
+            ศูนย์ช่วยเหลือป้ายทะเบียนหล่นหาย
+            <span class="text-xs bg-red-500 text-white font-medium px-2 py-0.5 rounded-full uppercase tracking-wider">ภัยน้ำท่วม</span>
+          </h1>
+          <p class="text-xs md:text-sm text-blue-100">แจ้งพบป้าย • แจ้งป้ายหาย • ปักหมุดพิกัดติดต่อรับคืน</p>
+        </div>
+      </div>
+      
+      <!-- Nav Tabs -->
+      <div class="flex bg-blue-700/60 p-1 rounded-xl backdrop-blur-sm text-sm font-medium w-full md:w-auto justify-center">
+        <button id="tab-explore-btn" onclick="switchTab('explore')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> ค้นหาและแผนที่
+        </button>
+        <button id="tab-found-btn" onclick="switchTab('found')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300"></i> แจ้งเก็บได้
+        </button>
+        <button id="tab-lost-btn" onclick="switchTab('lost')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
+          <i data
