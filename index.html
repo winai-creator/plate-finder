@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ศูนย์ค้นหาและรับคืนป้ายทะเบียนรถสูญหายจากน้ำท่วม</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white/20 p-2 rounded-xl">
+          <i data-lucide="shield-alert" class="w-7 h-7 text-yellow-300"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold flex items-center gap-2">
+            ศูนย์ช่วยเหลือป้ายทะเบียนหล่นหาย
+            <span class="text-xs bg-red-500 text-white font-medium px-2 py-0.5 rounded-full">ภัยน้ำท่วม</span>
+          </h1>
+          <p class="text-xs md:text-sm text-blue-100">รวมพิกัดป้ายที่เก็บได้ • ปากทางเข้าวัดเสม็ดใต้ (ถนน 3121) & บ้านพ่อใหญ่สมศรี</p>
+        </div>
+      </div>
+      
+      <div class="flex bg-blue-700/60 p-1 rounded-xl text-sm font-medium w-full md:w-auto justify-center">
+        <button id="tab-explore-btn" onclick="switchTab('explore')" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition">
+          <i data-lucide="search" class="w-4 h-4"></i> ค้นหาป้าย (${ALL_DATA_COUNT} ป้าย)
+        </button>
+        <button id="tab-add-btn" onclick="switchTab('add')" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-300"></i> แจ้งเพิ่มป้ายใหม่
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col gap-4">
+    
+    <!-- Quick Notice Banner -->
+    <div class="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm shadow-sm">
+      <div class="flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-5 h-5 text-amber-600 shrink-0"></i>
+        <span><b>จุดรับคืนใหญ่:</b> ปากทางเข้าวัดเสม็ดใต้ ถ.3121 (บางคล้า-แปลงยาว ตลาดบางบ่อ) มีป้ายเก็บได้รวบรวมไว้ 87 ป้าย</span>
+      </div>
+      <a href="https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา" target="_blank" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
+        เปิดแผนที่นำทาง <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+      </a>
+    </div>
+
+    <!-- Section: Search & List & Map -->
+    <section id="section-explore" class="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1">
+      
+      <!-- Left Column: Search & Plate Cards (5 Cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-3">
+        
+        <!-- Search Box -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+          <div class="relative">
+            <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input 
+              type="text" 
+              id="search-input" 
+              oninput="filterPlates()"
+              placeholder="พิมพ์เลขทะเบียน เช่น 9461, 5240, 2กบ, หรือชื่อจังหวัด..." 
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+            >
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <select id="filter-province" onchange="filterPlates()" class="p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700">
+              <option value="ALL">ทุกจังหวัด</option>
+              <option value="ฉะเชิงเทรา">ฉะเชิงเทรา</option>
+              <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
+              <option value="ชลบุรี">ชลบุรี</option>
+              <option value="ปราจีนบุรี">ปราจีนบุรี</option>
+              <option value="สระแก้ว">สระแก้ว</option>
+              <option value="พระนครศรีอยุธยา">พระนครศรีอยุธยา</option>
+              <option value="ระยอง">ระยอง</option>
+              <option value="สมุทรปราการ">สมุทรปราการ</option>
+            </select>
+
+            <select id="filter-location" onchange="filterPlates()" class="p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700">
+              <option value="ALL">ทุกจุดรับคืน</option>
+              <option value="วัดเสม็ดใต้">วัดเสม็ดใต้ (ถนน 3121)</option>
+              <option value="พ่อใหญ่สมศรี">บ้านพ่อใหญ่สมศรี</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between items-center text-xs text-slate-500 pt-1 border-t border-slate-100">
+            <span id="results-count">พบข้อมูล 0 ป้าย</span>
+            <span class="text-emerald-600 font-semibold">● เก็บได้รอเจ้าของรับคืน</span>
+          </div>
+        </div>
+
+        <!-- Cards Scrollable Area -->
+        <div id="plates-list" class="space-y-2.5 overflow-y-auto max-h-[600px] pr-1 custom-scroll">
+          <!-- Plate cards generated dynamically -->
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive Map (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col h-[480px] lg:h-auto min-h-[460px]">
+        <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2 px-1">
+            <h3 class="font-semibold text-slate-700 text-sm flex items-center gap-1.5">
+              <i data-lucide="map" class="w-4 h-4 text-blue-600"></i> แผนที่จุดรวบรวมป้ายทะเบียน
+            </h3>
+            <span class="text-xs text-slate-400">คลิกที่หมุดเพื่อเปิดนำทาง</span>
+          </div>
+          <div id="main-map" class="w-full flex-1 rounded-xl border border-slate-200 z-0"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Section: Add New Plate Form (Hidden by default) -->
+    <section id="section-add" class="hidden max-w-xl mx-auto w-full bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800 mb-1">แจ้งพบป้ายทะเบียนเพิ่มเติม</h3>
+      <p class="text-xs text-slate-500 mb-4">ร่วมด้วยช่วยกันส่งคืนป้ายให้เจ้าของรถ</p>
+      
+      <form onsubmit="handleManualAdd(event)" class="space-y-3 text-sm">
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-xs font-semibold mb-1">หมวดอักษร</label>
+            <input type="text" id="add-prefix" required placeholder="เช่น 2กบ, บษ" class="w-full p-2 border rounded-xl bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">เลขทะเบียน</label>
+            <input type="text" id="add-number" required placeholder="เช่น 9461" class="w-full p-2 border rounded-xl bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">จังหวัด</label>
+            <input type="text" id="add-province" required placeholder="เช่น ฉะเชิงเทรา" class="w-full p-2 border rounded-xl bg-slate-50">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">จุดรับคืน / ผู้เก็บได้</label>
+          <input type="text" id="add-location" required placeholder="เช่น ปากทางเข้าวัดเสม็ดใต้ ถ.3121" class="w-full p-2 border rounded-xl bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">เบอร์ติดต่อ / ลิงก์แผนที่</label>
+          <input type="text" id="add-contact" placeholder="เช่น 08x-xxx-xxxx หรือลิงก์ Google Maps" class="w-full p-2 border rounded-xl bg-slate-50">
+        </div>
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="switchTab('explore')" class="flex-1 py-2 rounded-xl border font-semibold">ยกเลิก</button>
+          <button type="submit" class="flex-1 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700">บันทึกลงระบบ</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Modal Details -->
+  <div id="modal-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-center">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- DATABASE OF ALL COLLECTED PLATES (87 Plates at Wat Samettai + Somsri Chonburi) ---
+    const DB_PLATES = [
+      // เคสคุณสมศรี (ชลบุรี)
+      { prefix: "2กบ", number: "5240", province: "ชลบุรี", spot: "บ้านพ่อใหญ่สมศรี", contact: "พ่อใหญ่สมศรี", gmap: "https://maps.app.goo.gl/wnWKpQL1XuQFi7UC6", lat: 13.1147, lng: 101.1275, type: "MOTO" },
+
+      // รายการ 87 ป้าย ปากทางเข้าวัดเสม็ดใต้ ถนน 3121 (บางคล้า-แปลงยาว ตลาดบางบ่อ)
+      { prefix: "บษ", number: "9461", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บว", number: "9367", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ฒฮ", number: "9850", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "งว", number: "9024", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "5กษ", number: "8876", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "9264", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "9674", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "1969", province: "สมุทรปราการ", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "นข", number: "2283", province: "นครนายก", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "นค", number: "7510", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "1588", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "3086", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บบ", number: "8753", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "วจ", number: "3993", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กบ", number: "3710", province: "สระแก้ว", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กม", number: "5239", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "2989", province: "สระแก้ว", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ขย", number: "2968", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "", number: "83-1028", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "", number: "83-2645", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "", number: "30-2665", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121 (ป้ายเหลือง)", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "", number: "69-3768", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121 (ป้ายเหลือง)", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "3162", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2กภ", number: "8555", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2ฒธ", number: "2041", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ฒณ", number: "287", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ฒต", number: "9527", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ฒจ", number: "7142", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "8236", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ยท", number: "1007", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "5424", province: "กาฬสินธุ์", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "9594", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2ฒฉ", number: "2559", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2ฒบ", number: "4780", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ยด", number: "7094", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บษ", number: "3871", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บด", number: "3037", province: "อุทัยธานี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บพ", number: "810", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บฉ", number: "1553", province: "นครนายก", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "9586", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ผก", number: "2221", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บร", number: "1959", province: "พระนครศรีอยุธยา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ผบ", number: "4290", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ฒธ", number: "9046", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ฒค", number: "7697", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บว", number: "4702", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "2806", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "3ฒล", number: "9072", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2ฒท", number: "3555", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "2ฒษ", number: "1817", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1ฒอ", number: "4211", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ฒถ", number: "935", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "8965", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บล", number: "2787", province: "จันทบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1ฒบ", number: "4295", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1228", number: "ฉะเชิงเทรา", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "จค", number: "2339", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "4ขอ", number: "5939", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1ขง", number: "304", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กง", number: "4777", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กง", number: "5427", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กว", number: "4816", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "5ขน", number: "4478", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1ขณ", number: "4952", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ข-", number: "9591", province: "สมุทรปราการ", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "9กฒ", number: "6451", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ขฉ", number: "4215", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กย", number: "7553", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ขข", number: "1652", province: "พระนครศรีอยุธยา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กธ", number: "9406", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กต", number: "9083", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "งร", number: "6754", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กบ", number: "2995", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กว", number: "519", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กพ", number: "4558", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ขอ", number: "3813", province: "ระยอง", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "จว", number: "4839", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "จค", number: "3517", province: "นครราชสีมา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กม", number: "7801", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "4134", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "9959", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กธ", number: "9556", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บน", number: "9326", province: "สระแก้ว", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "จท", number: "4248", province: "ชลบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กน", number: "1347", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ผพ", number: "9239", province: "อุดรธานี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "4ฌง", number: "8964", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "1ฌฉ", number: "2262", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กว", number: "6180", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ขฉ", number: "6548", province: "พระนครศรีอยุธยา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "ฒก", number: "222", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บย", number: "1255", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "บท", number: "5700", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "8ขข", number: "2390", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "นม", number: "1967", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กบ", number: "2193", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "กน", number: "1235", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "4ฒม", number: "7477", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "6กฎ", number: "5385", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
+      { prefix: "นม", number: "2507", province: "ปราจีนบุรี", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 }
+    ];
+
+    let allPlates = [...DB_PLATES];
+    const ALL_DATA_COUNT = allPlates.length;
+
+    let map, markers = [];
+
+    function initMap() {
+      // Set view to Chachoengsao / Chonburi area
+      map = L.map('main-map').setView([13.6872, 101.2185], 9);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      // Marker Wat Samettai
+      const markerWat = L.marker([13.6872, 101.2185]).addTo(map);
+      markerWat.bindPopup(`
+        <div class="font-sans text-xs">
+          <b class="text-emerald-700 text-sm">จุดรับคืน: ปากทางเข้าวัดเสม็ดใต้ (ถ.3121)</b>
+          <p class="text-gray-600 mt-1">รวบรวมไว้ 87 ป้ายทะเบียน (เส้นทางบางคล้า-แปลงยาว ตลาดบางบ่อ)</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา" target="_blank" class="text-blue-600 font-bold block mt-1.5">📍 เปิดนำทาง Google Maps</a>
+        </div>
+      `);
+
+      // Marker Somsri
+      const markerSomsri = L.marker([13.1147, 101.1275]).addTo(map);
+      markerSomsri.bindPopup(`
+        <div class="font-sans text-xs">
+          <b class="text-emerald-700 text-sm">จุดรับคืน: บ้านพ่อใหญ่สมศรี (ชลบุรี)</b>
+          <p class="text-gray-600 mt-1">ป้ายมอเตอร์ไซค์ 2กบ 5240 ชลบุรี</p>
+          <a href="https://maps.app.goo.gl/wnWKpQL1XuQFi7UC6" target="_blank" class="text-blue-600 font-bold block mt-1.5">📍 เปิดนำทาง Google Maps</a>
+        </div>
+      `);
+    }
+
+    function renderPlates(list) {
+      const container = document.getElementById('plates-list');
+      const countEl = document.getElementById('results-count');
+      container.innerHTML = '';
+      countEl.textContent = `พบข้อมูล ${list.length} ป้าย`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 text-center text-slate-400 rounded-2xl border border-slate-100">
+            <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
+            <p>ไม่พบเลขทะเบียนที่ค้นหา</p>
+            <p class="text-xs mt-1">ลองพิมพ์เฉพาะตัวเลข เช่น 9461 หรือ 5240</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      list.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-center justify-between gap-3 cursor-pointer";
+        card.onclick = () => showModal(item);
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-24 shrink-0 bg-white border-2 border-slate-800 rounded-lg p-1 text-center shadow-xs">
+              <div class="text-[11px] font-bold text-slate-900 leading-tight">${item.prefix || 'ป้าย'}</div>
+              <div class="text-[9px] text-slate-600 leading-tight">${item.province}</div>
+              <div class="text-base font-black text-slate-950 leading-tight font-mono">${item.number}</div>
+            </div>
+            <div>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">เก็บได้รอรับคืน</span>
+              <h4 class="font-bold text-slate-800 text-sm mt-0.5">${item.prefix} ${item.number} ${item.province}</h4>
+              <p class="text-xs text-slate-500 truncate max-w-[210px] sm:max-w-xs flex items-center gap-1 mt-0.5">
+                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i> ${item.spot}
+              </p>
+            </div>
+          </div>
+          <button class="shrink-0 text-blue-600 hover:bg-blue-50 p-2 rounded-xl text-xs font-semibold">
+            ดูจุดรับ &gt;
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function filterPlates() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const prov = document.getElementById('filter-province').value;
+      const loc = document.getElementById('filter-location').value;
+
+      const filtered = allPlates.filter(item => {
+        const fullTxt = `${item.prefix} ${item.number} ${item.province} ${item.spot}`.toLowerCase();
+        const matchQ = fullTxt.includes(q);
+        const matchProv = (prov === 'ALL') || (item.province === prov);
+        const matchLoc = (loc === 'ALL') || (item.spot.includes(loc));
+        return matchQ && matchProv && matchLoc;
+      });
+
+      renderPlates(filtered);
+    }
+
+    function switchTab(tab) {
+      if (tab === 'explore') {
+        document.getElementById('section-explore').classList.remove('hidden');
+        document.getElementById('section-add').classList.add('hidden');
+        document.getElementById('tab-explore-btn').className = "flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition";
+        document.getElementById('tab-add-btn').className = "flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-white hover:bg-white/10 transition";
+        setTimeout(() => map.invalidateSize(), 150);
+      } else {
+        document.getElementById('section-explore').classList.add('hidden');
+        document.getElementById('section-add').classList.remove('hidden');
+        document.getElementById('tab-add-btn').className = "flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition";
+        document.getElementById('tab-explore-btn').className = "flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-white hover:bg-white/10 transition";
+      }
+    }
+
+    function showModal(item) {
+      const body = document.getElementById('modal-body');
+      body.innerHTML = `
+        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full mb-3">
+          🟢 เก็บได้ (ติดต่อรับคืน)
+        </span>
+        <div class="w-44 mx-auto border-4 border-slate-800 bg-white rounded-xl shadow-md p-3 mb-4 text-center">
+          <div class="text-xl font-bold tracking-wider">${item.prefix || 'ป้าย'}</div>
+          <div class="text-xs font-semibold text-slate-600">${item.province}</div>
+          <div class="text-3xl font-extrabold tracking-widest font-mono text-slate-950">${item.number}</div>
+        </div>
+        <div class="bg-slate-50 p-3 rounded-2xl text-left text-xs space-y-2 mb-4">
+          <div>
+            <span class="text-slate-400 block">จุดรับคืน:</span>
+            <b class="text-slate-800 text-sm">${item.spot}</b>
+          </div>
+          <div>
+            <span class="text-slate-400 block">เส้นทาง/พื้นที่:</span>
+            <span class="text-slate-700">ถนน 3121 เส้นบางคล้า-แปลงยาว ตลาดบางบ่อ</span>
+          </div>
+        </div>
+        <a href="${item.gmap}" target="_blank" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 shadow-sm transition text-sm">
+          <i data-lucide="navigation" class="w-4 h-4"></i> เปิด Google Maps นำทาง
+        </a>
+      `;
+      document.getElementById('modal-detail').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('modal-detail').classList.add('hidden');
+    }
+
+    function handleManualAdd(e) {
+      e.preventDefault();
+      const p = {
+        prefix: document.getElementById('add-prefix').value.trim(),
+        number: document.getElementById('add-number').value.trim(),
+        province: document.getElementById('add-province').value.trim(),
+        spot: document.getElementById('add-location').value.trim(),
+        gmap: document.getElementById('add-contact').value.trim() || "https://maps.google.com",
+        lat: 13.6872, lng: 101.2185
+      };
+      allPlates.unshift(p);
+      switchTab('explore');
+      filterPlates();
+      alert("เพิ่มข้อมูลป้ายเรียบร้อยแล้ว");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      renderPlates(allPlates);
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
