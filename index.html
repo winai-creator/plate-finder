@@ -37,13 +37,13 @@
             ศูนย์ช่วยเหลือป้ายทะเบียนหล่นหาย
             <span class="text-xs bg-red-500 text-white font-medium px-2 py-0.5 rounded-full">ภัยน้ำท่วม</span>
           </h1>
-          <p class="text-xs md:text-sm text-blue-100">รวมพิกัดป้ายที่เก็บได้ • ปากทางเข้าวัดเสม็ดใต้ (ถนน 3121) & บ้านพ่อใหญ่สมศรี</p>
+          <p class="text-xs md:text-sm text-blue-100">สภ.ดอนหัวฬ่อ • ปากทางเข้าวัดเสม็ดใต้ ถ.3121 • บ้านพ่อใหญ่สมศรี</p>
         </div>
       </div>
       
       <div class="flex bg-blue-700/60 p-1 rounded-xl text-sm font-medium w-full md:w-auto justify-center">
         <button id="tab-explore-btn" onclick="switchTab('explore')" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition">
-          <i data-lucide="search" class="w-4 h-4"></i> ค้นหาป้าย (${ALL_DATA_COUNT} ป้าย)
+          <i data-lucide="search" class="w-4 h-4"></i> ค้นหาป้ายทะเบียน
         </button>
         <button id="tab-add-btn" onclick="switchTab('add')" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-300"></i> แจ้งเพิ่มป้ายใหม่
@@ -56,13 +56,13 @@
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col gap-4">
     
     <!-- Quick Notice Banner -->
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm shadow-sm">
+    <div class="bg-blue-50 border border-blue-200 text-blue-950 px-4 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm shadow-sm">
       <div class="flex items-center gap-2">
-        <i data-lucide="map-pin" class="w-5 h-5 text-amber-600 shrink-0"></i>
-        <span><b>จุดรับคืนใหญ่:</b> ปากทางเข้าวัดเสม็ดใต้ ถ.3121 (บางคล้า-แปลงยาว ตลาดบางบ่อ) มีป้ายเก็บได้รวบรวมไว้ 87 ป้าย</span>
+        <i data-lucide="map-pin" class="w-5 h-5 text-blue-600 shrink-0"></i>
+        <span><b>เพิ่มจุดรับคืนใหม่:</b> <b>สภ.ดอนหัวฬ่อ จ.ชลบุรี</b> มีป้ายทะเบียนเก็บได้รวบรวมไว้กว่า 60 ป้าย ติดต่อ 038-111911</span>
       </div>
-      <a href="https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา" target="_blank" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
-        เปิดแผนที่นำทาง <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+      <a href="https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี" target="_blank" class="text-blue-700 hover:underline font-semibold flex items-center gap-1">
+        แผนที่ สภ.ดอนหัวฬ่อ <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
       </a>
     </div>
 
@@ -80,7 +80,7 @@
               type="text" 
               id="search-input" 
               oninput="filterPlates()"
-              placeholder="พิมพ์เลขทะเบียน เช่น 9461, 5240, 2กบ, หรือชื่อจังหวัด..." 
+              placeholder="พิมพ์เลขทะเบียน เช่น 2752, 6569, ดอนหัวฬ่อ, ชลบุรี..." 
               class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-medium"
             >
           </div>
@@ -88,19 +88,20 @@
           <div class="grid grid-cols-2 gap-2 text-xs">
             <select id="filter-province" onchange="filterPlates()" class="p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700">
               <option value="ALL">ทุกจังหวัด</option>
-              <option value="ฉะเชิงเทรา">ฉะเชิงเทรา</option>
-              <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
               <option value="ชลบุรี">ชลบุรี</option>
+              <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
+              <option value="ฉะเชิงเทรา">ฉะเชิงเทรา</option>
               <option value="ปราจีนบุรี">ปราจีนบุรี</option>
-              <option value="สระแก้ว">สระแก้ว</option>
               <option value="พระนครศรีอยุธยา">พระนครศรีอยุธยา</option>
               <option value="ระยอง">ระยอง</option>
-              <option value="สมุทรปราการ">สมุทรปราการ</option>
+              <option value="สระแก้ว">สระแก้ว</option>
+              <option value="นครราชสีมา">นครราชสีมา</option>
             </select>
 
             <select id="filter-location" onchange="filterPlates()" class="p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700">
               <option value="ALL">ทุกจุดรับคืน</option>
-              <option value="วัดเสม็ดใต้">วัดเสม็ดใต้ (ถนน 3121)</option>
+              <option value="ดอนหัวฬ่อ">สภ.ดอนหัวฬ่อ (ชลบุรี)</option>
+              <option value="วัดเสม็ดใต้">วัดเสม็ดใต้ (ถ.3121)</option>
               <option value="พ่อใหญ่สมศรี">บ้านพ่อใหญ่สมศรี</option>
             </select>
           </div>
@@ -133,7 +134,7 @@
 
     </section>
 
-    <!-- Section: Add New Plate Form (Hidden by default) -->
+    <!-- Section: Add New Plate Form -->
     <section id="section-add" class="hidden max-w-xl mx-auto w-full bg-white p-6 rounded-2xl shadow-md border border-slate-100">
       <h3 class="text-lg font-bold text-slate-800 mb-1">แจ้งพบป้ายทะเบียนเพิ่มเติม</h3>
       <p class="text-xs text-slate-500 mb-4">ร่วมด้วยช่วยกันส่งคืนป้ายให้เจ้าของรถ</p>
@@ -142,24 +143,24 @@
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-xs font-semibold mb-1">หมวดอักษร</label>
-            <input type="text" id="add-prefix" required placeholder="เช่น 2กบ, บษ" class="w-full p-2 border rounded-xl bg-slate-50">
+            <input type="text" id="add-prefix" required placeholder="เช่น 2กบ, จร" class="w-full p-2 border rounded-xl bg-slate-50">
           </div>
           <div>
             <label class="block text-xs font-semibold mb-1">เลขทะเบียน</label>
-            <input type="text" id="add-number" required placeholder="เช่น 9461" class="w-full p-2 border rounded-xl bg-slate-50">
+            <input type="text" id="add-number" required placeholder="เช่น 5829" class="w-full p-2 border rounded-xl bg-slate-50">
           </div>
           <div>
             <label class="block text-xs font-semibold mb-1">จังหวัด</label>
-            <input type="text" id="add-province" required placeholder="เช่น ฉะเชิงเทรา" class="w-full p-2 border rounded-xl bg-slate-50">
+            <input type="text" id="add-province" required placeholder="เช่น ชลบุรี" class="w-full p-2 border rounded-xl bg-slate-50">
           </div>
         </div>
         <div>
           <label class="block text-xs font-semibold mb-1">จุดรับคืน / ผู้เก็บได้</label>
-          <input type="text" id="add-location" required placeholder="เช่น ปากทางเข้าวัดเสม็ดใต้ ถ.3121" class="w-full p-2 border rounded-xl bg-slate-50">
+          <input type="text" id="add-location" required placeholder="เช่น สภ.ดอนหัวฬ่อ" class="w-full p-2 border rounded-xl bg-slate-50">
         </div>
         <div>
           <label class="block text-xs font-semibold mb-1">เบอร์ติดต่อ / ลิงก์แผนที่</label>
-          <input type="text" id="add-contact" placeholder="เช่น 08x-xxx-xxxx หรือลิงก์ Google Maps" class="w-full p-2 border rounded-xl bg-slate-50">
+          <input type="text" id="add-contact" placeholder="เช่น 038-111911" class="w-full p-2 border rounded-xl bg-slate-50">
         </div>
         <div class="pt-3 flex gap-2">
           <button type="button" onclick="switchTab('explore')" class="flex-1 py-2 rounded-xl border font-semibold">ยกเลิก</button>
@@ -181,12 +182,110 @@
   </div>
 
   <script>
-    // --- DATABASE OF ALL COLLECTED PLATES (87 Plates at Wat Samettai + Somsri Chonburi) ---
+    // --- DATABASE OF ALL COLLECTED PLATES ---
     const DB_PLATES = [
-      // เคสคุณสมศรี (ชลบุรี)
-      { prefix: "2กบ", number: "5240", province: "ชลบุรี", spot: "บ้านพ่อใหญ่สมศรี", contact: "พ่อใหญ่สมศรี", gmap: "https://maps.app.goo.gl/wnWKpQL1XuQFi7UC6", lat: 13.1147, lng: 101.1275, type: "MOTO" },
+      // === 1. จุด สภ.ดอนหัวฬ่อ จ.ชลบุรี (ประมาณ 60 ป้าย) ===
+      // รถจักรยานยนต์ (มอเตอร์ไซค์)
+      { prefix: "2กอ", number: "8799", province: "นครราชสีมา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "2กศ", number: "3397", province: "อุดรธานี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "3กต", number: "4123", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "งพว", number: "829", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "3กฒ", number: "7394", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "3กม", number: "1061", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "3กข", number: "9470", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "2กก", number: "1412", province: "ขอนแก่น", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "ขพร", number: "259", province: "สกลนคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "จพว", number: "139", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "1กม", number: "5664", province: "อ่างทอง", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
+      { prefix: "5กณ", number: "7785", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365, vType: "MOTO" },
 
-      // รายการ 87 ป้าย ปากทางเข้าวัดเสม็ดใต้ ถนน 3121 (บางคล้า-แปลงยาว ตลาดบางบ่อ)
+      // รถยนต์ (สภ.ดอนหัวฬ่อ)
+      { prefix: "2ฒส", number: "2752", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "1นฉ", number: "3996", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งต", number: "3812", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขม", number: "6569", province: "ระยอง", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "บม", number: "7160", province: "ชัยภูมิ", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จร", number: "5829", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "7ขต", number: "3400", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "บร", number: "2538", province: "เพชรบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จจ", number: "8207", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "กร", number: "5286", province: "ลำปาง", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขษ", number: "4691", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2ฒท", number: "2007", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "5กจ", number: "1404", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยก", number: "6302", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขง", number: "5907", province: "พระนครศรีอยุธยา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งข", number: "9172", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งย", number: "1305", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "4กผ", number: "5347", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "4ขธ", number: "7276", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2ขว", number: "2672", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ฒม", number: "1017", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ผพ", number: "852", province: "อุบลราชธานี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งค", number: "1069", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ฒม", number: "4316", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ฆน", number: "1114", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จง", number: "7988", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "4ตค", number: "7578", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "1ขล", number: "9828", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จข", number: "5827", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยก", number: "7324", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จพ", number: "2900", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จร", number: "9460", province: "เชียงใหม่", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "5กร", number: "8936", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "บม", number: "6445", province: "ปราจีนบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยท", number: "227", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขล", number: "5671", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งย", number: "7980", province: "นครราชสีมา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "7ขด", number: "1118", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3กณ", number: "5010", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จค", number: "8521", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "บพ", number: "9741", province: "ฉะเชิงเทรา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2กก", number: "6508", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ฉง", number: "7573", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขก", number: "6789", province: "เชียงราย", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขธ", number: "785", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยพ", number: "6057", province: "นครราชสีมา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ผผ", number: "933", province: "อุบลราชธานี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งค", number: "2432", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "7กศ", number: "8649", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยฉ", number: "995", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ม-", number: "6152", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี) (ป้ายแดง)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "8ขฆ", number: "8554", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "", number: "34-6579", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี) (ป้ายเหลือง)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "งย", number: "8086", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ยจ", number: "4484", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2ฒษ", number: "1737", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จธ", number: "5874", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ขข", number: "6975", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2กว", number: "5582", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "4ขรู", number: "4288", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ขบ", number: "1580", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จพ", number: "2148", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จว", number: "1850", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2ขฐ", number: "6682", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "บม", number: "1379", province: "เพชรบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "กม", number: "7320", province: "ลพบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "1ขท", number: "3807", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จง", number: "5487", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "6ขฎ", number: "5352", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "2ฒห", number: "6238", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ฒพ", number: "4239", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ฉค", number: "4581", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "กย", number: "7913", province: "ฉะเชิงเทรา", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จย", number: "2877", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขย", number: "9253", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ขฬ", number: "9295", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จธ", number: "4325", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ฒธ", number: "7790", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "จก", number: "1821", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "3ฒย", number: "647", province: "กรุงเทพมหานคร", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+      { prefix: "ขย", number: "446", province: "ชลบุรี", spot: "สภ.ดอนหัวฬ่อ (ชลบุรี)", phone: "038-111911", gmap: "https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี", lat: 13.4116, lng: 101.0365 },
+
+      // === 2. จุดบ้านพ่อใหญ่สมศรี (ชลบุรี) ===
+      { prefix: "2กบ", number: "5240", province: "ชลบุรี", spot: "บ้านพ่อใหญ่สมศรี", contact: "พ่อใหญ่สมศรี", gmap: "https://maps.app.goo.gl/wnWKpQL1XuQFi7UC6", lat: 13.1147, lng: 101.1275, vType: "MOTO" },
+
+      // === 3. จุดปากทางเข้าวัดเสม็ดใต้ ถนน 3121 (ฉะเชิงเทรา) 87 ป้าย ===
       { prefix: "บษ", number: "9461", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
       { prefix: "บว", number: "9367", province: "ฉะเชิงเทรา", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
       { prefix: "3ฒฮ", number: "9850", province: "กรุงเทพมหานคร", spot: "ปากทางเข้าวัดเสม็ดใต้ ถ.3121", gmap: "https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา", lat: 13.6872, lng: 101.2185 },
@@ -290,28 +389,36 @@
     ];
 
     let allPlates = [...DB_PLATES];
-    const ALL_DATA_COUNT = allPlates.length;
-
     let map, markers = [];
 
     function initMap() {
-      // Set view to Chachoengsao / Chonburi area
-      map = L.map('main-map').setView([13.6872, 101.2185], 9);
+      // Set view to Chonburi & Chachoengsao
+      map = L.map('main-map').setView([13.55, 101.12], 9);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // Marker Wat Samettai
+      // 1. Marker สภ.ดอนหัวฬ่อ
+      const markerDon = L.marker([13.4116, 101.0365]).addTo(map);
+      markerDon.bindPopup(`
+        <div class="font-sans text-xs">
+          <b class="text-blue-700 text-sm">จุดรับคืน: สภ.ดอนหัวฬ่อ (ชลบุรี)</b>
+          <p class="text-gray-600 mt-1">รวบรวมไว้กว่า 60 ป้าย (โทร: 038-111911)</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=สภ.ดอนหัวฬ่อ+ชลบุรี" target="_blank" class="text-blue-600 font-bold block mt-1.5">📍 เปิดนำทาง Google Maps</a>
+        </div>
+      `);
+
+      // 2. Marker วัดเสม็ดใต้
       const markerWat = L.marker([13.6872, 101.2185]).addTo(map);
       markerWat.bindPopup(`
         <div class="font-sans text-xs">
           <b class="text-emerald-700 text-sm">จุดรับคืน: ปากทางเข้าวัดเสม็ดใต้ (ถ.3121)</b>
-          <p class="text-gray-600 mt-1">รวบรวมไว้ 87 ป้ายทะเบียน (เส้นทางบางคล้า-แปลงยาว ตลาดบางบ่อ)</p>
+          <p class="text-gray-600 mt-1">รวบรวมไว้ 87 ป้าย (บางคล้า-แปลงยาว ตลาดบางบ่อ)</p>
           <a href="https://www.google.com/maps/search/?api=1&query=วัดเสม็ดใต้+บางคล้า+ฉะเชิงเทรา" target="_blank" class="text-blue-600 font-bold block mt-1.5">📍 เปิดนำทาง Google Maps</a>
         </div>
       `);
 
-      // Marker Somsri
+      // 3. Marker Somsri
       const markerSomsri = L.marker([13.1147, 101.1275]).addTo(map);
       markerSomsri.bindPopup(`
         <div class="font-sans text-xs">
@@ -333,14 +440,15 @@
           <div class="bg-white p-8 text-center text-slate-400 rounded-2xl border border-slate-100">
             <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
             <p>ไม่พบเลขทะเบียนที่ค้นหา</p>
-            <p class="text-xs mt-1">ลองพิมพ์เฉพาะตัวเลข เช่น 9461 หรือ 5240</p>
+            <p class="text-xs mt-1">ลองพิมพ์เฉพาะตัวเลข เช่น 2752, 5829 หรือ 6569</p>
           </div>
         `;
         lucide.createIcons();
         return;
       }
 
-      list.forEach((item, index) => {
+      list.forEach((item) => {
+        const isMoto = item.vType === "MOTO";
         const card = document.createElement('div');
         card.className = "bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-center justify-between gap-3 cursor-pointer";
         card.onclick = () => showModal(item);
@@ -353,7 +461,10 @@
               <div class="text-base font-black text-slate-950 leading-tight font-mono">${item.number}</div>
             </div>
             <div>
-              <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">เก็บได้รอรับคืน</span>
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.2 rounded-full font-medium">เก็บได้รอส่งคืน</span>
+                ${isMoto ? '<span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded-md">มอเตอร์ไซค์</span>' : ''}
+              </div>
               <h4 class="font-bold text-slate-800 text-sm mt-0.5">${item.prefix} ${item.number} ${item.province}</h4>
               <p class="text-xs text-slate-500 truncate max-w-[210px] sm:max-w-xs flex items-center gap-1 mt-0.5">
                 <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i> ${item.spot}
@@ -417,10 +528,11 @@
             <span class="text-slate-400 block">จุดรับคืน:</span>
             <b class="text-slate-800 text-sm">${item.spot}</b>
           </div>
+          ${item.phone ? `
           <div>
-            <span class="text-slate-400 block">เส้นทาง/พื้นที่:</span>
-            <span class="text-slate-700">ถนน 3121 เส้นบางคล้า-แปลงยาว ตลาดบางบ่อ</span>
-          </div>
+            <span class="text-slate-400 block">เบอร์โทรติดต่อ:</span>
+            <a href="tel:${item.phone}" class="text-blue-600 font-bold text-sm">${item.phone}</a>
+          </div>` : ''}
         </div>
         <a href="${item.gmap}" target="_blank" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 shadow-sm transition text-sm">
           <i data-lucide="navigation" class="w-4 h-4"></i> เปิด Google Maps นำทาง
@@ -441,8 +553,9 @@
         number: document.getElementById('add-number').value.trim(),
         province: document.getElementById('add-province').value.trim(),
         spot: document.getElementById('add-location').value.trim(),
-        gmap: document.getElementById('add-contact').value.trim() || "https://maps.google.com",
-        lat: 13.6872, lng: 101.2185
+        phone: document.getElementById('add-contact').value.trim(),
+        gmap: "https://maps.google.com",
+        lat: 13.4116, lng: 101.0365
       };
       allPlates.unshift(p);
       switchTab('explore');
