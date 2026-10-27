@@ -1,65 +1,159 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบค้นหาและแจ้งป้ายทะเบียนหาย/เก็บได้ (อุทกภัย)</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts Prompt & Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-  <style>
-    body {
-      font-family: 'Prompt', sans-serif;
-    }
-    .font-plate {
-      font-family: 'Prompt', sans-serif;
-      letter-spacing: 1px;
-    }
-    .custom-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 9999px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องค้นหาแผ่นป้ายทะเบียน</title>
+    <!-- นำเข้าฟอนต์สารบรรณให้ดูเป็นทางการและอ่านง่าย -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ใช้ Tailwind CSS CDN เวอร์ชันที่รองรับการรันไฟล์ในเครื่อง (Local File) -->
+    <script src="https://tailwindcss.com"></script>
+    
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 text-gray-800 min-h-screen flex flex-col justify-between">
 
-  <!-- Header -->
-  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
-          <i data-lucide="shield-alert" class="w-7 h-7 text-yellow-300"></i>
+    <!-- ส่วนหัวข้อด้านบนสุด -->
+    <header class="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-lg p-6 text-center w-full">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl sm:text-4xl font-bold flex items-center justify-center gap-3">
+                🔍 เครื่องค้นหาแผ่นป้ายทะเบียน
+            </h1>
+            <p class="text-blue-100 mt-2 text-sm sm:text-base">ระบบส่วนกลางสำหรับค้นหาและแจ้งป้ายทะเบียนรถหายจากภัยน้ำท่วม</p>
         </div>
-        <div>
-          <h1 class="text-xl md:text-2xl font-bold leading-tight flex items-center gap-2">
-            ศูนย์ช่วยเหลือป้ายทะเบียนหล่นหาย
-            <span class="text-xs bg-red-500 text-white font-medium px-2 py-0.5 rounded-full uppercase tracking-wider">ภัยน้ำท่วม</span>
-          </h1>
-          <p class="text-xs md:text-sm text-blue-100">แจ้งพบป้าย • แจ้งป้ายหาย • ปักหมุดพิกัดติดต่อรับคืน</p>
+    </header>
+
+    <!-- ส่วนเนื้อหาหลัก จัดวางให้อยู่กึ่งกลางหน้าจอเสมอกัน -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 my-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            
+            <!-- ฝั่งซ้าย: ฟอร์มกรอกข้อมูล -->
+            <section class="md:col-span-1 bg-white p-5 rounded-2xl shadow-md border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-900 border-b pb-3 mb-4 flex items-center gap-2">
+                    📢 แจ้งข้อมูลป้ายทะเบียน
+                </h2>
+                <form id="plateForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ประเภทการแจ้ง</label>
+                        <select id="status" class="w-full p-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            <option value="พบเจอ">ตามหาเจ้าของ (เก็บป้ายได้)</option>
+                            <option value="ตามหา">ตามหาป้ายทะเบียน (ทำหาย)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">เลขทะเบียนรถ</label>
+                        <input type="text" id="plateNumber" placeholder="เช่น กข 1234" required
+                               class="w-full p-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none uppercase transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">จังหวัด</label>
+                        <input type="text" id="province" placeholder="เช่น กรุงเทพมหานคร" required
+                               class="w-full p-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">เบอร์ติดต่อกลับ</label>
+                        <input type="tel" id="contact" placeholder="เช่น 081-XXXXXXX" required
+                               class="w-full p-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">หมายเหตุ / สถานที่</label>
+                        <textarea id="note" rows="3" placeholder="ระบุสถานที่พบ หรือจุดที่คาดว่าทำตกหล่น..." 
+                                  class="w-full p-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md active:scale-95">
+                        บันทึกข้อมูลเข้าระบบ
+                    </button>
+                </form>
+            </section>
+
+            <!-- ฝั่งขวา: ช่องค้นหาและตารางข้อมูล -->
+            <section class="md:col-span-2 space-y-4 h-full flex flex-col">
+                
+                <!-- เครื่องมือค้นหาและฟิลเตอร์ตัวกรอง -->
+                <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-200 flex flex-col sm:flex-row gap-3 items-center">
+                    <div class="relative w-full flex-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">🔍</span>
+                        <input type="text" id="searchBox" placeholder="พิมพ์เลขทะเบียน, จังหวัด หรือสถานที่ เพื่อค้นหา..." 
+                               class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="changeFilter('ทั้งหมด')" id="btn-ทั้งหมด" class="filter-btn px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium shadow-sm transition">ทั้งหมด</button>
+                        <button onclick="changeFilter('พบเจอ')" id="btn-พบเจอ" class="filter-btn px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition">เก็บได้</button>
+                        <button onclick="changeFilter('ตามหา')" id="btn-ตามหา" class="filter-btn px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition">ทำหาย</button>
+                    </div>
+                </div>
+
+                <!-- ตารางแสดงรายการข้อมูล -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex-grow flex flex-col min-h-[400px]">
+                    <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            📋 รายการทะเบียนในระบบ
+                        </h2>
+                    </div>
+                    
+                    <div class="overflow-x-auto flex-grow">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    <th class="p-4 w-24">ประเภท</th>
+                                    <th class="p-4 w-32">เลขทะเบียน</th>
+                                    <th class="p-4 w-32">จังหวัด</th>
+                                    <th class="p-4 w-32">เบอร์ติดต่อ</th>
+                                    <th class="p-4">หมายเหตุ</th>
+                                    <th class="p-4 text-center w-20">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="plateTableBody" class="divide-y divide-gray-100 text-sm text-gray-700 font-medium">
+                                <!-- ข้อมูลจะมาแสดงตรงนี้ด้วยคำสั่ง JavaScript -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- ข้อความแสดงเมื่อไม่มีข้อมูล -->
+                        <div id="noData" class="p-12 text-center text-gray-400 hidden flex flex-col items-center justify-center gap-2">
+                            <span class="text-4xl">❌</span>
+                            <p class="font-bold text-gray-500">ไม่พบข้อมูลป้ายทะเบียนในระบบ</p>
+                            <p class="text-xs text-gray-400">คุณสามารถเพิ่มข้อมูลใหม่ได้ที่ฟอร์มด้านซ้ายมือ</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-      </div>
-      
-      <!-- Nav Tabs -->
-      <div class="flex bg-blue-700/60 p-1 rounded-xl backdrop-blur-sm text-sm font-medium w-full md:w-auto justify-center">
-        <button id="tab-explore-btn" onclick="switchTab('explore')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white text-blue-800 shadow-sm transition">
-          <i data-lucide="map-pin" class="w-4 h-4"></i> ค้นหาและแผนที่
-        </button>
-        <button id="tab-found-btn" onclick="switchTab('found')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300"></i> แจ้งเก็บได้
-        </button>
-        <button id="tab-lost-btn" onclick="switchTab('lost')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-white hover:bg-white/10 transition">
-          <i data
+    </main>
+
+    <!-- ส่วนท้ายหน้าเว็บ (Footer) -->
+    <footer class="bg-gray-800 text-gray-400 text-center py-4 text-xs border-t border-gray-700 w-full">
+        <p>© 2026 เครื่องค้นหาแผ่นป้ายทะเบียน - พัฒนาโดย winai-creator</p>
+    </footer>
+
+    <!-- ส่วนระบบทำงานหลังบ้าน (JavaScript) -->
+    <script>
+        let currentFilter = 'ทั้งหมด';
+
+        // โหลดข้อมูลตัวอย่างเริ่มต้น
+        const defaultData = [
+            { id: 1, status: "พบเจอ", plateNumber: "กข 1234", province: "เชียงใหม่", contact: "089-1234567", note: "เจอแถวหน้าเซ็นทรัลเฟสติวัล ตอนน้ำลด" },
+            { id: 2, status: "ตามหา", plateNumber: "ชน 999", province: "กรุงเทพมหานคร", contact: "081-9876543", note: "หล่นหายแถววิภาวดีรังสิต" }
+        ];
+
+        if (!localStorage.getItem('plates')) {
+            localStorage.setItem('plates', JSON.stringify(defaultData));
+        }
+
+        function getPlates() {
+            return JSON.parse(localStorage.getItem('plates')) || [];
+        }
+
+        // ฟังก์ชันอัปเดตสีปุ่มคัดกรองข้อมูล
+        function changeFilter(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition";
+            });
+            
+            const activeBtn = document.getElementById('btn-' + status);
+            if(status === 'ทั้งหมด') activeBtn.className = "filter-btn px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium shadow-sm transition";
